@@ -6,6 +6,9 @@ The Game of Life, also known simply as Life, is a cellular automaton devised by 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Demo
+Here is the [build of this project](http://www.kinoliclients.com/game-of-life-react/).
+
 ## Installation
 
 In the project directory, you can run via npm or yarn:
