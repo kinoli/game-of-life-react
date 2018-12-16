@@ -12,3 +12,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.life-game {
+  margin: 20px;
+}
+.life-game input {
+  max-width: 200px;
+}
+.life-game button {
+  margin-bottom: 20px;
+}
+.life-game .grid {
+  position: relative;
+}
+.life-game .grid>div {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: #e2e2e2;
+}
+
+.life-game .grid>div.active {
+  background-color: black;
+}
