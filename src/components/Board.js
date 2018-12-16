@@ -8,6 +8,7 @@ export default class App extends Component {
       size: null,
       grid: []
     }
+    this.intervalId = null
   }
 
   restartBoard() {
@@ -40,8 +41,9 @@ export default class App extends Component {
       return cell
     })
     this.setState({grid: gridWithNeighbors})
-      
-    setInterval(() => this.setNextState(), 100)
+    
+    clearInterval(this.intervalId)
+    this.intervalId = setInterval(() => this.setNextState(), this.props.interval)
   }
 
   getNeighbors(cell) {
@@ -72,7 +74,7 @@ export default class App extends Component {
     })
 
     return (
-      <div className="grid clearfix">
+      <div className="grid clearfix" style={this.props.style}>
         {grid}
       </div>
     )
