@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import Cell from './Cell'
 
 export default class App extends Component {
@@ -6,12 +6,16 @@ export default class App extends Component {
     super()
     this.state = {
       size: null,
-      grid: []
+      grid: [],
+      startTime: 0,
+      buildTime: 0
     }
     this.intervalId = null
   }
 
   restartBoard() {
+    clearInterval(this.intervalId)
+    this.setState({startTime: new Date()})
     this.setState({grid: []})
     this.setState({size: this.props.size}, () => {
       this.buildGrid()
@@ -26,7 +30,13 @@ export default class App extends Component {
     const gridConstruction = []
     for(let x = 0; x < this.state.size; x++) {
       for(let y = 0; y < this.state.size; y++) {
-        const newCell = new Cell(x, y)
+        const newCell = {
+          alive: Math.random() >= 0.5,
+          coords: {
+            x: x,
+            y: y
+          }
+        }
         gridConstruction.push(newCell)
       }
     }
@@ -40,42 +50,66 @@ export default class App extends Component {
       cell.neighbors = this.getNeighbors(cell)
       return cell
     })
-    this.setState({grid: gridWithNeighbors})
-    
-    clearInterval(this.intervalId)
-    this.intervalId = setInterval(() => this.setNextState(), this.props.interval)
+    this.setState({grid: gridWithNeighbors}, () => {
+      this.setState({buildTime:  new Date() - this.state.startTime})
+      clearInterval(this.intervalId)
+      this.intervalId = setInterval(() => this.setNextState(), this.props.interval)
+    })
   }
 
   getNeighbors(cell) {
     const max = this.state.size - 1
-    return this.state.grid.filter(n => {
-      if (n !== cell) {
-        const xFlag = Math.abs(n.coords.x - cell.coords.x) <= 1 || Math.abs(cell.coords.x - n.coords.x) === max
-        const yFlag = Math.abs(n.coords.y - cell.coords.y) <= 1 || Math.abs(cell.coords.y - n.coords.y) === max
-        return (xFlag && yFlag) || null
+    const result = []
+    this.state.grid.filter(n => {
+      if (result.length < 8 && n !== cell) {
+        const xDiff = Math.abs(n.coords.x - cell.coords.x)
+        const xFlag = xDiff <= 1 || xDiff === max
+        if (xFlag) {
+          const yDiff = Math.abs(n.coords.y - cell.coords.y)
+          const yFlag = yDiff <= 1 || yDiff === max
+          if (yFlag) {
+            result.push(n)
+          }
+        }
       }
-      return null
     })
+    return result
   }
 
   setNextState() {
-    this.state.grid.map(c => c.saveNextState())
-    this.state.grid.map(c => c.setNextState())
-    this.forceUpdate()
+    const gridWithNewSavedStates = [...this.state.grid].map(cell => {
+      const aliveNeighbors = cell.neighbors.filter(n => n.alive)
+      cell.nextAliveState = 
+        (aliveNeighbors.length === 3 && !cell.alive) ||
+        ([2, 3].includes(aliveNeighbors.length) && cell.alive)
+      return cell
+    })
+    const newGrid = gridWithNewSavedStates.map(cell => {
+      cell.alive = cell.nextAliveState
+      cell.nextAliveState = null
+      return cell
+    })
+    this.setState({grid: newGrid})
+    // this.forceUpdate()
   }
 
   render() {
+    const { blockSize } = this.props
+
     const grid = this.state.grid.map((c, index) => {
       const style = {
-        left: `${c.coords.x * 20}px`,
-        top: `${c.coords.y * 20}px`
+        left: `${c.coords.x * blockSize}px`,
+        top: `${c.coords.y * blockSize}px`
       }
-      return <div key={index} className={c.alive ? 'active' : ''} style={style} />
+      return <Cell key={index} alive={c.alive} style={style} />
     })
 
     return (
-      <div className="grid clearfix" style={this.props.style}>
-        {grid}
+      <div>
+        <p className="text-center"><small>Execution Load Time: {this.state.buildTime} ms</small></p>
+        <div className="grid clearfix" style={this.props.style}>
+          {grid}
+        </div>
       </div>
     )
   }

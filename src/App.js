@@ -31,7 +31,9 @@ class App extends Component {
   }
 
   render() {
-    const width = this.state.size * this.state.blockSize
+    const { size, interval, blockSize } = this.state
+
+    const width = size * blockSize
     const boardStyle = {
       width: `${width}px`,
       height: `${width}px`
@@ -39,8 +41,8 @@ class App extends Component {
 
     return (
       <div className="text-center">
-        <h1 class="mt-4">The Game of Life - Built in React</h1>
-        <p class="mb-4">The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank">Rules of the game</a>.</p>
+        <h1 className="mt-4">The Game of Life - Built in React</h1>
+        <p className="mb-4">The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970. <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life" target="_blank" rel="noopener noreferrer">Rules of the game</a>.</p>
         <div className="life-game">
           <div className="container-fluid">
             <div className="form-group">
@@ -55,7 +57,7 @@ class App extends Component {
             </div>        
             <button className="btn-secondary" onClick={() => this.onResetBoard()}>Reset Board</button>
             <div className="board-holder">
-              <Board ref="board" size={this.state.size} interval={this.state.interval} blockSize={this.blockSize} style={boardStyle} />
+              <Board ref="board" size={size} interval={interval} blockSize={blockSize} style={boardStyle} />
             </div>
           </div>
         </div>
