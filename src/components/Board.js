@@ -90,7 +90,6 @@ export default class App extends Component {
       return cell
     })
     this.setState({grid: newGrid})
-    // this.forceUpdate()
   }
 
   render() {
@@ -106,7 +105,7 @@ export default class App extends Component {
 
     return (
       <div>
-        <p className="text-center"><small>Execution Load Time: {this.state.buildTime} ms</small></p>
+        <p className="text-center"><small>Blocks: {this.state.grid.length} | Execution Load Time: {this.state.buildTime} ms</small></p>
         <div className="grid clearfix" style={this.props.style}>
           {grid}
         </div>
